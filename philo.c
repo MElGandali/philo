@@ -21,6 +21,23 @@ long gettime(t_philo *philo)
 	return(philo->t_ms - philo->time);	
 }
 
+void	ft_usleep(t_philo *philo)
+{
+	long	time;
+
+	time = gettime(philo);
+	usleep((philo->Zzz - 10) * 1000);
+	while (gettime(philo) - time < philo->Zzz)
+		;
+}
+
+
+
+// void supervisor(t_philo *philo)
+// {
+	
+// }
+
 void *routini(void *arg)
 {
 	t_philo *philo = (t_philo *)arg;
@@ -28,18 +45,17 @@ void *routini(void *arg)
 	while (1)
 	{
 		sleep(1);
+		printf("%ld  %d is thinking\n", gettime(philo), philo->tid);
 		if (philo->tid % 2 == 0)
 		{
 			pthread_mutex_lock(&philo->mx->fork);
-			printf("%ld  %ld has taken a fork\n", gettime(philo), philo->tid);
-			printf("%ld  %ld is eating\n", gettime(philo), philo->tid);
-			pthread_mutex_unlock(&philo->mx->fork);ma
+			printf("%ld  %d has taken a fork\n", gettime(philo), philo->tid);
+			printf("%ld  %d is eating\n", gettime(philo), philo->tid);
+			//supevisor(philo);
+			pthread_mutex_unlock(&philo->mx->fork);
 		}
-		else
-		{
-			printf("%ld  %ld is sleeping\n", gettime(philo), philo->tid);
-			usleep(philo->time_to_sleep);
-		}
+		printf("%ld  %d is sleeping\n", gettime(philo), philo->tid);
+		usleep(philo->time_to_sleep);
 	}
 
 	//return(NULL);
@@ -52,9 +68,14 @@ void fill_args(int argc, char **argv, t_philo *philo)
 	philo->time_to_eat = ft_atoi(argv[3]);
 	philo->time_to_sleep = ft_atoi(argv[4]);
 	if (argc == 6)
-		philo->must_eat = ft_atoi(argv[5]);
-	
+		philo->meals_nb = ft_atoi(argv[5]);
+	if (philo->time_to_die == 0 || philo->time_to_eat == 0 || philo->time_to_sleep == 0)
+	{
+		write (1, "Invalid Arguments\n", 18);
+		exit (1);
+	}
 }
+
 int main (int argc, char **argv)
 {
 	pthread_t th[200];
@@ -66,7 +87,7 @@ int main (int argc, char **argv)
 	if (argc == 5 || argc == 6)
 	{
 		philo->nb = ft_atoi(argv[1]);
-		if(philo->nb < 1)
+		if(philo->nb < 1 || philo->nb > 200)
 		{
 			write (1, "Invalid philo number\n", 22);
 			exit (1);

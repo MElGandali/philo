@@ -25,17 +25,20 @@ typedef struct mutex
 
 typedef struct philosopher
 {
+	int Zzz;
 	int nb;
-	long tid;
+	int tid;
 	t_mutex *mx;
 	int time_to_die;
 	int time_to_eat;
 	int time_to_sleep;
-	int must_eat;
+	int meals_nb;
 	long begin_time;
 	long time;
 	struct timeval current_time;
 	long t_ms;
+	int dead;
+	int finished;
 }			t_philo;
 
 int	ft_atoi(const char *str);
