@@ -19,26 +19,31 @@
 typedef struct mutex
 {
 	pthread_mutex_t fork;
-	pthread_mutex_t eat;
-
 }			t_mutex;
 
-typedef struct philosopher
-{
-	int Zzz;
+
+/*
 	int nb;
-	int tid;
-	t_mutex *mx;
 	int time_to_die;
 	int time_to_eat;
 	int time_to_sleep;
 	int meals_nb;
-	long begin_time;
-	long time;
-	struct timeval current_time;
-	long t_ms;
+	t_args
+*/
+typedef struct s_philosopher
+{
+	int Zzz;
+	int nb;
+	int tid;
+	int begin_time;
+	t_mutex *mx;
+	pthread_mutex_t *m;
+	int time_to_die;
+	int time_to_eat;
+	int time_to_sleep;
+	int meals_nb;
 	int dead;
-	int finished;
+	//t_args	*args;
 }			t_philo;
 
 int	ft_atoi(const char *str);

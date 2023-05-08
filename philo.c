@@ -12,22 +12,23 @@
 
 #include"philo.h"
 
-long gettime(t_philo *philo)
+long gettime()
 {
-	gettimeofday(&philo->current_time, NULL);
-	philo->t_ms = philo->current_time.tv_sec * 1000 + philo->current_time.tv_usec / 1000;
-	if (philo->time == 0)
-		philo->time = philo->t_ms;
-	return(philo->t_ms - philo->time);	
+	struct timeval current_time;
+	long time;
+
+	gettimeofday(&current_time, NULL);
+	time = current_time.tv_sec * 1000 + current_time.tv_usec / 1000;
+	return(time);
 }
 
-void	ft_usleep(t_philo *philo)
+void	ft_usleep(int Zzz)
 {
-	long	time;
+	long	start;
 
-	time = gettime(philo);
-	usleep((philo->Zzz - 10) * 1000);
-	while (gettime(philo) - time < philo->Zzz)
+	start = gettime();
+	usleep((Zzz - 10) * 1000);
+	while (gettime() - start < Zzz)
 		;
 }
 
@@ -42,27 +43,51 @@ void *routini(void *arg)
 {
 	t_philo *philo = (t_philo *)arg;
 	
+	// else
+	// printf("%ld  %d is sleeping\n", gettime() - philo->begin_time, philo->tid);
+	// usleep(philo->time_to_sleep);
+	if (philo->tid % 2 == 0)
+	{
+		printf("ok\n");
+		ft_usleep(60);
+	}
 	while (1)
 	{
-		sleep(1);
-		printf("%ld  %d is thinking\n", gettime(philo), philo->tid);
-		if (philo->tid % 2 == 0)
-		{
-			pthread_mutex_lock(&philo->mx->fork);
-			printf("%ld  %d has taken a fork\n", gettime(philo), philo->tid);
-			printf("%ld  %d is eating\n", gettime(philo), philo->tid);
-			//supevisor(philo);
-			pthread_mutex_unlock(&philo->mx->fork);
-		}
-		printf("%ld  %d is sleeping\n", gettime(philo), philo->tid);
-		usleep(philo->time_to_sleep);
-	}
+		//printf("%ld  %d is thinking\n", gettime() - philo->begin_time, philo->tid);
+		//philo[philo->tid].eating = 0;
 
+		// if (philo[(philo->tid + 1) % philo->nb].eating == 0 && philo[(philo->tid - 1) % philo->nb].eating == 0)
+		// {
+			pthread_mutex_lock(&philo->mx->fork);
+			pthread_mutex_lock(philo->m);
+			printf("%ld  %d has taken a fork\n", gettime() - philo->begin_time, philo->tid);
+			printf("%ld  %d is eating\n", gettime() - philo->begin_time, philo->tid);
+			ft_usleep(philo->time_to_eat);
+			philo[philo->tid].meals_nb++;
+			pthread_mutex_unlock(&philo->mx->fork);
+			pthread_mutex_unlock(philo->m);
+			printf("%ld  %d is sleeping\n", gettime() - philo->begin_time, philo->tid);
+			ft_usleep(philo->time_to_sleep);
+		}
+		// if(philo->tid % 2 != 0)
+		// {
+		// 	pthread_mutex_lock(&philo->mx->fork);
+		// 	pthread_mutex_lock(&philo->mx->lfork);
+		// 	printf("%ld  %d has taken a fork\n", gettime() - philo->begin_time, philo->tid);
+		// 	printf("%ld  %d is eating\n", gettime() - philo->begin_time, philo->tid);
+		// 	ft_usleep(philo->time_to_eat);
+		// 	philo[philo->tid].meals_nb++;
+		// 	pthread_mutex_unlock(&philo->mx->fork);
+		// 	pthread_mutex_unlock(&philo->mx->lfork);
+		// }
+		// printf("%ld  %d is sleeping\n", gettime() - philo->begin_time, philo->tid);
+		// ft_usleep(philo->time_to_sleep);
 	//return(NULL);
-}
+	}
 
 void fill_args(int argc, char **argv, t_philo *philo)
 {
+	philo->begin_time = gettime();
 	philo->nb = ft_atoi(argv[1]);
 	philo->time_to_die = ft_atoi(argv[2]);
 	philo->time_to_eat = ft_atoi(argv[3]);
@@ -82,7 +107,7 @@ int main (int argc, char **argv)
 	t_philo philo[200];
 	t_mutex mutex[200];
 	int i;
-	
+
 	i = 1;
 	if (argc == 5 || argc == 6)
 	{
@@ -98,7 +123,7 @@ int main (int argc, char **argv)
 			philo[i].mx = &mutex[i];
 			fill_args(argc, argv, &philo[i]);
 			pthread_mutex_init(&philo[i].mx->fork, NULL);
-			pthread_mutex_init(&philo[i].mx->eat, NULL);
+			philo[i].m = &philo[(i + 1) % philo->nb].mx->fork;
 			if(pthread_create(&th[i], NULL, routini, &philo[i]) != 0)
 			{
 				write(1, "Failed to create the thread\n", 28);
