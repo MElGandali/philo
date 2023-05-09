@@ -35,9 +35,10 @@ typedef struct s_philosopher
 	int Zzz;
 	int nb;
 	int tid;
-	int begin_time;
+	long long begin_time;
 	t_mutex *mx;
 	pthread_mutex_t *m;
+	pthread_mutex_t mtx;
 	int time_to_die;
 	int time_to_eat;
 	int time_to_sleep;

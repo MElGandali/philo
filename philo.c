@@ -47,10 +47,7 @@ void *routini(void *arg)
 	// printf("%ld  %d is sleeping\n", gettime() - philo->begin_time, philo->tid);
 	// usleep(philo->time_to_sleep);
 	if (philo->tid % 2 == 0)
-	{
-		printf("ok\n");
 		ft_usleep(60);
-	}
 	while (1)
 	{
 		//printf("%ld  %d is thinking\n", gettime() - philo->begin_time, philo->tid);
@@ -58,17 +55,17 @@ void *routini(void *arg)
 
 		// if (philo[(philo->tid + 1) % philo->nb].eating == 0 && philo[(philo->tid - 1) % philo->nb].eating == 0)
 		// {
-			pthread_mutex_lock(&philo->mx->fork);
+			pthread_mutex_lock(&philo->mtx);
 			pthread_mutex_lock(philo->m);
-			printf("%ld  %d has taken a fork\n", gettime() - philo->begin_time, philo->tid);
-			printf("%ld  %d is eating\n", gettime() - philo->begin_time, philo->tid);
+			printf("%lld  %d has taken a fork\n", gettime() - philo->begin_time, philo->tid);
+			printf("%lld  %d is eating\n", gettime() - philo->begin_time, philo->tid);
 			ft_usleep(philo->time_to_eat);
 			philo[philo->tid].meals_nb++;
-			pthread_mutex_unlock(&philo->mx->fork);
+			pthread_mutex_unlock(&philo->mtx);
 			pthread_mutex_unlock(philo->m);
-			printf("%ld  %d is sleeping\n", gettime() - philo->begin_time, philo->tid);
+			printf("%lld  %d is sleeping\n", gettime() - philo->begin_time, philo->tid);
 			ft_usleep(philo->time_to_sleep);
-		}
+		//}
 		// if(philo->tid % 2 != 0)
 		// {
 		// 	pthread_mutex_lock(&philo->mx->fork);
@@ -84,6 +81,7 @@ void *routini(void *arg)
 		// ft_usleep(philo->time_to_sleep);
 	//return(NULL);
 	}
+}
 
 void fill_args(int argc, char **argv, t_philo *philo)
 {
@@ -108,7 +106,7 @@ int main (int argc, char **argv)
 	t_mutex mutex[200];
 	int i;
 
-	i = 1;
+	i = 0;
 	if (argc == 5 || argc == 6)
 	{
 		philo->nb = ft_atoi(argv[1]);
@@ -117,13 +115,13 @@ int main (int argc, char **argv)
 			write (1, "Invalid philo number\n", 22);
 			exit (1);
 		}
-		while (i <= philo->nb)
+		while (i < philo->nb)
 		{
-			philo[i].tid = i;
+			philo[i].tid = i + 1;
 			philo[i].mx = &mutex[i];
 			fill_args(argc, argv, &philo[i]);
-			pthread_mutex_init(&philo[i].mx->fork, NULL);
-			philo[i].m = &philo[(i + 1) % philo->nb].mx->fork;
+			pthread_mutex_init(&philo[i].mtx, NULL);
+			philo[i].m = &philo[(i + 1) % philo->nb].mtx;
 			if(pthread_create(&th[i], NULL, routini, &philo[i]) != 0)
 			{
 				write(1, "Failed to create the thread\n", 28);
