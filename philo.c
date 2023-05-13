@@ -32,55 +32,40 @@ void	ft_usleep(int Zzz)
 		;
 }
 
-
-
-// void supervisor(t_philo *philo)
-// {
-	
-// }
-
 void *routini(void *arg)
 {
 	t_philo *philo = (t_philo *)arg;
-	
-	// else
-	// printf("%ld  %d is sleeping\n", gettime() - philo->begin_time, philo->tid);
-	// usleep(philo->time_to_sleep);
+	int counter = philo->nb;
+
 	if (philo->tid % 2 == 0)
 		ft_usleep(60);
 	while (1)
 	{
-		//printf("%ld  %d is thinking\n", gettime() - philo->begin_time, philo->tid);
-		//philo[philo->tid].eating = 0;
-
-		// if (philo[(philo->tid + 1) % philo->nb].eating == 0 && philo[(philo->tid - 1) % philo->nb].eating == 0)
-		// {
 			pthread_mutex_lock(&philo->mtx);
 			pthread_mutex_lock(philo->m);
 			printf("%lld  %d has taken a fork\n", gettime() - philo->begin_time, philo->tid);
 			printf("%lld  %d is eating\n", gettime() - philo->begin_time, philo->tid);
 			ft_usleep(philo->time_to_eat);
-			philo[philo->tid].meals_nb++;
+			philo->meals_nb--;
+			if (philo->meals_nb == 0)
+			{
+				//printf("nmrti hya %d\n", philo->tid);
+    			pthread_mutex_lock(&philo->mx->meals);
+    			counter--;
+			
+    		if (counter == 0)
+			{
+        		pthread_mutex_unlock(&philo->mx->meals);
+				break;
+			}
+			}
 			pthread_mutex_unlock(&philo->mtx);
 			pthread_mutex_unlock(philo->m);
 			printf("%lld  %d is sleeping\n", gettime() - philo->begin_time, philo->tid);
 			ft_usleep(philo->time_to_sleep);
-		//}
-		// if(philo->tid % 2 != 0)
-		// {
-		// 	pthread_mutex_lock(&philo->mx->fork);
-		// 	pthread_mutex_lock(&philo->mx->lfork);
-		// 	printf("%ld  %d has taken a fork\n", gettime() - philo->begin_time, philo->tid);
-		// 	printf("%ld  %d is eating\n", gettime() - philo->begin_time, philo->tid);
-		// 	ft_usleep(philo->time_to_eat);
-		// 	philo[philo->tid].meals_nb++;
-		// 	pthread_mutex_unlock(&philo->mx->fork);
-		// 	pthread_mutex_unlock(&philo->mx->lfork);
-		// }
-		// printf("%ld  %d is sleeping\n", gettime() - philo->begin_time, philo->tid);
-		// ft_usleep(philo->time_to_sleep);
-	//return(NULL);
+	
 	}
+	return(NULL);
 }
 
 void fill_args(int argc, char **argv, t_philo *philo)
@@ -121,6 +106,7 @@ int main (int argc, char **argv)
 			philo[i].mx = &mutex[i];
 			fill_args(argc, argv, &philo[i]);
 			pthread_mutex_init(&philo[i].mtx, NULL);
+			pthread_mutex_init(&philo->mx->meals, NULL);
 			philo[i].m = &philo[(i + 1) % philo->nb].mtx;
 			if(pthread_create(&th[i], NULL, routini, &philo[i]) != 0)
 			{
@@ -133,7 +119,8 @@ int main (int argc, char **argv)
 	}
 	while (1)
 	{
-		//sleep(1);
+		if (philo->meals_nb == 0)
+			return (0);
 	}
 	return 0;
 }

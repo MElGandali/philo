@@ -18,7 +18,7 @@
 
 typedef struct mutex
 {
-	pthread_mutex_t fork;
+	pthread_mutex_t meals;
 }			t_mutex;
 
 
