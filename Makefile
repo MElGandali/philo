@@ -12,10 +12,10 @@
 
 NAME = philo
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g -fsanitize=thread
 LDFLAGS = -lpthread
 RM = rm -rf
-SRC = philo.c ft_atoi.c
+SRC = philo.c philo_utils.c ft_atoi.c
 OBJ = $(SRC:.c=.o)
 
 all: $(NAME)
@@ -24,7 +24,7 @@ $(NAME): $(OBJ)
 	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME) $(LDFLAGS)
 
 %.o: %.c philo.h
-	@$(CC) -c $(CFLAGS) $< -o $@
+	@$(CC) -c  $(CFLAGS) $< -o $@
 
 clean:
 	@$(RM) $(OBJ)
