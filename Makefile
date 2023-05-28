@@ -12,7 +12,7 @@
 
 NAME = philo
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g -fsanitize=thread
+CFLAGS = -Wall -Wextra -Werror #-g -fsanitize=thread
 LDFLAGS = -lpthread
 RM = rm -rf
 SRC = philo.c philo_utils.c ft_atoi.c

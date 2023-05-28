@@ -19,7 +19,9 @@
 typedef struct mutex
 {
 	int counter;
-	pthread_mutex_t meals;
+	int dead;
+	long long begin_time;
+	pthread_mutex_t var;
 }			t_mutex;
 
 typedef struct s_philosopher
@@ -27,7 +29,6 @@ typedef struct s_philosopher
 	int time;
 	int nb;
 	int tid;
-	long long begin_time;
 	t_mutex *mx;
 	pthread_t th;
 	pthread_mutex_t *m;
@@ -36,7 +37,7 @@ typedef struct s_philosopher
 	int time_to_eat;
 	int time_to_sleep;
 	int meals_nb;
-	int dead;
+	int woke_up;
 }			t_philo;
 
 int	ft_atoi(const char *str);
