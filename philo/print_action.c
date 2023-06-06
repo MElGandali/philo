@@ -6,7 +6,7 @@
 /*   By: mel-gand <mel-gand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 16:17:43 by mel-gand          #+#    #+#             */
-/*   Updated: 2023/06/02 17:46:38 by mel-gand         ###   ########.fr       */
+/*   Updated: 2023/06/06 17:06:08 by mel-gand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int	print_eat(t_philo *philo)
 		if (print_all(philo, "is eating") == 1)
 			return (1);
 		pthread_mutex_lock(&philo->mx->var);
-		philo->woke_up = (gettime() - philo->mx->begin_time);
+		philo->ate = (gettime() - philo->mx->begin_time);
 		pthread_mutex_unlock(&philo->mx->var);
 		if (ft_usleep(philo, philo->time_to_eat) == 1)
 			return (1);

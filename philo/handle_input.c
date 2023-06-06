@@ -6,7 +6,7 @@
 /*   By: mel-gand <mel-gand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 19:29:25 by mel-gand          #+#    #+#             */
-/*   Updated: 2023/06/02 18:36:52 by mel-gand         ###   ########.fr       */
+/*   Updated: 2023/06/04 15:00:10 by mel-gand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int	meal_nb(int argc, t_philo *philo)
 {
 	int	meal_nb;
 
-	meal_nb = 1;
+	meal_nb = 0;
 	if (argc == 6)
 	{
 		meal_nb = philo->meals_nb;

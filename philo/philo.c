@@ -17,7 +17,6 @@ void	*routini(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	philo->woke_up = 0;
 	if (philo->tid % 2 == 0)
 		usleep(60);
 	while (1)
@@ -42,6 +41,7 @@ void	*routini(void *arg)
 
 int	fill_args(int argc, char **argv, t_philo *philo)
 {
+	philo->ate = 0;
 	philo->nb = ft_atoi(argv[1]);
 	philo->time_to_die = ft_atoi(argv[2]);
 	philo->time_to_eat = ft_atoi(argv[3]);
@@ -64,7 +64,6 @@ void	check_threads(t_philo *philo, t_mutex mutex, int argc)
 	i = 0;
 	while (1)
 	{
-		pthread_mutex_lock(&philo[i].mx->var);
 		if (monitor_death(philo, i) == 0)
 			break ;
 		if (check_meals(philo, &mutex, argc) == 0)
@@ -87,7 +86,7 @@ int	main(int argc, char **argv)
 		philo->nb = ft_atoi(argv[1]);
 		if (input_error(philo, argv) == -1)
 			return (1);
-		init_var(philo, &mutex, argv);
+		init_var(philo, &mutex);
 		pthread_mutex_init(&philo->mx->var, NULL);
 		if (handle_threads(philo, argc, argv) == 1)
 			return (1);

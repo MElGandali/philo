@@ -41,11 +41,11 @@ typedef struct s_philosopher
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				meals_nb;
-	int				woke_up;
+	int				ate;
 }			t_philo;
 
 long long	ft_atoi(char *str);
-void		init_var(t_philo *philo, t_mutex *mutex, char **argv);
+void		init_var(t_philo *philo, t_mutex *mutex);
 int			meal_nb(int argc, t_philo *philo);
 int			input_error(t_philo *philo, char **argv);
 int			ft_isalnum(int n);
