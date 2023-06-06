@@ -81,11 +81,11 @@ int	main(int argc, char **argv)
 	t_philo	philo[250];
 	t_mutex	mutex;
 
+	philo->nb = ft_atoi(argv[1]);
+	if (input_error(philo, argv) == -1)
+		return (1);
 	if (argc == 5 || argc == 6)
 	{
-		philo->nb = ft_atoi(argv[1]);
-		if (input_error(philo, argv) == -1)
-			return (1);
 		init_var(philo, &mutex);
 		pthread_mutex_init(&philo->mx->var, NULL);
 		if (handle_threads(philo, argc, argv) == 1)
